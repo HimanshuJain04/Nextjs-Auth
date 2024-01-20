@@ -1,3 +1,4 @@
+
 export default function userProfile({ params }: any) {
   return (
     <div className="flex justify-center items-center">
