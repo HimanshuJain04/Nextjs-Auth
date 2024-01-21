@@ -10,10 +10,28 @@ export async function POST(req: NextRequest) {
         const reqBody = await req.json();
         const { token } = reqBody;
 
-        console.log("token : ", token);
+        const user = await User.findOne(
+            {
+                verifyToken: token,
+                verifyTokenExpiry: { $gte: Date.now() }
+            }
+        );
 
-        User.findOne({ verifyToken: token })
+        if (!user) {
+            return NextResponse.json(
+                {
+                    message: "Invalid Token",
+                    success: false,
+                },
+                { status: 400 }
+            )
+        }
 
+        user.isVerified = true;
+        user.verifyToken = undefined;
+        user.verifyTokenExpiry = undefined;
+
+        await user.save();
 
         return NextResponse.json(
             {
@@ -31,6 +49,6 @@ export async function POST(req: NextRequest) {
             { status: 500 }
         )
     }
-
 }
+
 

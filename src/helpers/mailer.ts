@@ -8,6 +8,7 @@ export async function sendEmail({ email, emailType, userId }) {
         const hashedToken = await bcrypt.hash(userId.toString(), 10);
 
         if (emailType === "VERIFY") {
+
             const user = await User.findByIdAndUpdate(
                 userId,
                 {
@@ -43,9 +44,8 @@ export async function sendEmail({ email, emailType, userId }) {
             to: email,
             subject: emailType,
             html: `<p>
-            Click <a href = ${process.env.domain}/verifyToken?token=${hashedToken}</p>>here</a>
-          </p>;
-          `
+            Click <a href="${process.env.domain}/verifyToken?token=${hashedToken}" >here</a>
+          </p>`
         }
 
         const mailRes = await transport.sendMail(options);
